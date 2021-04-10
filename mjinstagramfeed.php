@@ -178,63 +178,62 @@ class Mjinstagramfeed extends Module
                 )
             );
         
-          $this->fields_form[2]['form'] = array(
-            'legend' => array(
-                'title' => $this->l('Dane autoryzacyjne'),
+        $this->fields_form[2]['form'] = array(
+        'legend' => array(
+            'title' => $this->l('Dane autoryzacyjne'),
+        ),
+        'input' => array(
+            array(
+                'type' => 'text',
+                'label' => $this->l('ID user'),
+                'size' => '5',
+                'name' => $this->prefix.'user_id',
+                'required' => true,
             ),
-            'input' => array(
-                array(
-                    'type' => 'text',
-                    'label' => $this->l('ID user'),
-                    'size' => '5',
-                    'name' => $this->prefix.'user_id',
-                    'required' => true,
-                ),
-                array(
-                    'type' => 'text',
-                    'label' => $this->l('Access token'),
-                    'size' => '5',
-                    'name' => $this->prefix.'access_token',
-                    'required' => true,
-                ),
-                ),
-            );
+            array(
+                'type' => 'text',
+                'label' => $this->l('Access token'),
+                'size' => '5',
+                'name' => $this->prefix.'access_token',
+                'required' => true,
+            ),
+            ),
+        );
           
-          $featurePosts = DB::getInstance()->ExecuteS("SELECT * FROM "._DB_PREFIX_."mj_simple_instagram");
-          $this->fields_form[3]['form'] = array(
-            'legend' => array(
-                'title' => $this->l('Feauted posts'),
-            ),
-            'input' => array(
-                array(
-                    'type' => 'select',
-                    'label' => $this->l('Select feature posts'),
-                    'multiple' => true,
-                    'size' => '5',
-                    'style' => 'width:100%',
-                    'name' => $this->prefix.'feature_posts[]',
-                    'required' => true,
-                    'options' => array(
-                        'query' => $featurePosts,
-                        'id' => 'id_mj_simple_instagram',
-                        'name' => 'post_link',
-                    ),
+        $featurePosts = DB::getInstance()->ExecuteS("SELECT * FROM "._DB_PREFIX_."mj_simple_instagram");
+        $this->fields_form[3]['form'] = array(
+        'legend' => array(
+            'title' => $this->l('Feauted posts'),
+        ),
+        'input' => array(
+            array(
+                'type' => 'select',
+                'label' => $this->l('Select feature posts'),
+                'multiple' => true,
+                'size' => '5',
+                'style' => 'width:100%',
+                'name' => $this->prefix.'feature_posts[]',
+                'required' => true,
+                'options' => array(
+                    'query' => $featurePosts,
+                    'id' => 'id_mj_simple_instagram',
+                    'name' => 'post_link',
                 ),
-                ),
-            'submit' => array(
-                'title' => $this->l('Save'),
-                'class' => 'btn btn-default pull-right',
             ),
-            );
-          
-        $wyroznione_posty = (array)@array_reverse(unserialize(Configuration::get($this->prefix.'feature_posts_store')));
+        ),
+        'submit' => array(
+            'title' => $this->l('Save'),
+            'class' => 'btn btn-default pull-right',
+            ),
+        );
 
+        $wyroznione_posty = (array)@array_reverse(unserialize(Configuration::get($this->prefix.'feature_posts_store')));
         $kontener_wyroznione_posty = '';
         $pozycje_postu = array();
         foreach ($wyroznione_posty as $post) {
             $sql_post = "SELECT * FROM "._DB_PREFIX_."mj_simple_instagram WHERE id_mj_simple_instagram = '".$post."'";
             $single_post = @DB::getInstance()->ExecuteS($sql_post, 1, 0)[0];
-            
+
             $kontener_wyroznione_posty =
                 array(
                     'type' => 'text',
@@ -245,10 +244,8 @@ class Mjinstagramfeed extends Module
                     'required' => true,
                     'data-val' => $single_post['id_mj_simple_instagram']
                 );
-            
             array_push($pozycje_postu, $kontener_wyroznione_posty);
         }
-        
         $this->fields_form[4]['form'] = array(
         'legend' => array(
             'title' => $this->l('Ordering position posts from instagram'),
