@@ -82,7 +82,7 @@ class MjinstagramfeedAuthModuleFrontController extends ModuleFrontController
              * Pobieranie ID usera
              */
             if (empty(Configuration::get($this->prefix.'user_id'))) {
-                $prepareIdUser = trim(Tools::substr($responseToken, strpos($responseToken,'"user_id":')), "}");
+                $prepareIdUser = trim(Tools::substr($responseToken, strpos($responseToken, '"user_id":')), "}");
                 $getIdUser = trim($prepareIdUser, '"user_id":');
                 
                 if (is_numeric($getIdUser)) {

@@ -227,41 +227,40 @@ class Mjinstagramfeed extends Module
             ),
             );
           
-          $wyroznione_posty = (array)@array_reverse(unserialize(Configuration::get($this->prefix.'feature_posts_store')));
+        $wyroznione_posty = (array)@array_reverse(unserialize(Configuration::get($this->prefix.'feature_posts_store')));
 
-            $kontener_wyroznione_posty = '';
+        $kontener_wyroznione_posty = '';
+        $pozycje_postu = array();
+        foreach ($wyroznione_posty as $post) {
+            $sql_post = "SELECT * FROM "._DB_PREFIX_."mj_simple_instagram WHERE id_mj_simple_instagram = '".$post."'";
+            $single_post = @DB::getInstance()->ExecuteS($sql_post, 1, 0)[0];
             
-            $pozycje_postu = array();
-            foreach ($wyroznione_posty as $post) {
-                $sql_post = "SELECT * FROM "._DB_PREFIX_."mj_simple_instagram WHERE id_mj_simple_instagram = '".$post."'";
-                $single_post = @DB::getInstance()->ExecuteS($sql_post, 1, 0)[0];
-                
-                $kontener_wyroznione_posty =
-                    array(
-                        'type' => 'text',
-                        'desc' => 'Pozycja postu',
-                        'label' => $this->l('Pozycja postu: '.$single_post['post_link']),
-                        'name' => $this->prefix.'pozycja_'.$single_post['id_mj_simple_instagram'],
-                        'disabled' => false,
-                        'required' => true,
-                        'data-val' => $single_post['id_mj_simple_instagram']
-                    );
-                
-                array_push($pozycje_postu, $kontener_wyroznione_posty);
-            }
+            $kontener_wyroznione_posty =
+                array(
+                    'type' => 'text',
+                    'desc' => 'Pozycja postu',
+                    'label' => $this->l('Pozycja postu: '.$single_post['post_link']),
+                    'name' => $this->prefix.'pozycja_'.$single_post['id_mj_simple_instagram'],
+                    'disabled' => false,
+                    'required' => true,
+                    'data-val' => $single_post['id_mj_simple_instagram']
+                );
             
-            $this->fields_form[4]['form'] = array(
-            'legend' => array(
-                'title' => $this->l('Ordering position posts from instagram'),
-            ),
-             'input' => $pozycje_postu,
-             'submit' => array(
-                'title' => $this->l('Save'),
-                'name' => 'save_pozycje_insta',
-                'id' => 'save_pozycje_insta',
-                'class' => 'btn btn-default pull-right',
-            ));
-            return $this->fields_form;
+            array_push($pozycje_postu, $kontener_wyroznione_posty);
+        }
+        
+        $this->fields_form[4]['form'] = array(
+        'legend' => array(
+            'title' => $this->l('Ordering position posts from instagram'),
+        ),
+            'input' => $pozycje_postu,
+            'submit' => array(
+            'title' => $this->l('Save'),
+            'name' => 'save_pozycje_insta',
+            'id' => 'save_pozycje_insta',
+            'class' => 'btn btn-default pull-right',
+        ));
+        return $this->fields_form;
     }
     public function renderForm()
     {
@@ -345,7 +344,6 @@ class Mjinstagramfeed extends Module
             curl_setopt($cu, CURLOPT_POSTFIELDS, http_build_query($params));
         }
         return curl_exec($cu);
-        
     }
     public function hookDisplayHome($params)
     {
