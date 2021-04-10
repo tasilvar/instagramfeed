@@ -1,10 +1,17 @@
+{*
+ * Module mjinstagramfeed
+ * @author MAGES Michał Jendraszczyk
+ * @copyright (c) 2020, MAGES Michał Jendraszczyk
+ * @license http://mages.pl MAGES Michał Jendraszczyk
+*}
+
 </div>
 <div class="full-width insta-block" style="margin: 40px 15px;">
     
     <div class="title-section text-center">
         <h1 class="title">
             <span>Instagram</span>
-            <a href="{$instagram_profile}" target="_blank">{$user_name}</a>
+            <a href="{$instagram_profile|escape:'htmlall':'UTF-8'}" target="_blank">{$user_name|escape:'htmlall':'UTF-8'}</a>
         </h1>
     </div>
     {*{$instagram_feeds|print_r}*}

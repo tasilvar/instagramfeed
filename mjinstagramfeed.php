@@ -1,6 +1,6 @@
 <?php
 /**
- * Instagram feed via oAuth 
+ * Instagram feed via oAuth
  * @author Michał Jendraszczyk
  * @copyright (c) 2020, Michał Jendraszczyk
  * @license https://mages.pl
@@ -37,8 +37,9 @@ class Mjinstagramfeed extends Module
         $tab->module = $this->name;
         $tab->id_parent = $idTabParent;
         $tab->position = 99;
-        if (!$tab->save())
+        if (!$tab->save()) {
             return false;
+        }
         return true;
     }
 
@@ -137,8 +138,8 @@ class Mjinstagramfeed extends Module
                 'class' => 'btn btn-default pull-right',
             ),
         );
-        
-        if(Configuration::get($this->prefix.'expires_date')) {
+
+        if (Configuration::get($this->prefix.'expires_date')) {
             $expires = Configuration::get($this->prefix.'expires_date');
         } else {
             $expires = '--';
@@ -231,11 +232,11 @@ class Mjinstagramfeed extends Module
             $kontener_wyroznione_posty = '';
             
             $pozycje_postu = array();
-            foreach($wyroznione_posty as $post) {
+            foreach ($wyroznione_posty as $post) {
                 $sql_post = "SELECT * FROM "._DB_PREFIX_."mj_simple_instagram WHERE id_mj_simple_instagram = '".$post."'";
                 $single_post = @DB::getInstance()->ExecuteS($sql_post, 1, 0)[0];
                 
-                $kontener_wyroznione_posty = 
+                $kontener_wyroznione_posty =
                     array(
                         'type' => 'text',
                         'desc' => 'Pozycja postu',
@@ -247,7 +248,6 @@ class Mjinstagramfeed extends Module
                     );
                 
                 array_push($pozycje_postu, $kontener_wyroznione_posty);
-
             }
             
             $this->fields_form[4]['form'] = array(
@@ -261,8 +261,7 @@ class Mjinstagramfeed extends Module
                 'id' => 'save_pozycje_insta',
                 'class' => 'btn btn-default pull-right',
             ));
-            
-        return $this->fields_form;
+            return $this->fields_form;
     }
     public function renderForm()
     {
@@ -281,7 +280,7 @@ class Mjinstagramfeed extends Module
             $form->tpl_vars['fields_value'][$input['name']] = Tools::getValue($input['name'], Configuration::get($input['name']));
         }
         
-         foreach ($this->fields_form[4]['form']['input'] as $input) {
+        foreach ($this->fields_form[4]['form']['input'] as $input) {
             $form->tpl_vars['fields_value'][$input['name']] = Tools::getValue($input['name'], Configuration::get($input['name']));
         }
         $form->tpl_vars['fields_value'][$this->prefix . 'feature_posts[]'] =  Tools::getValue($this->prefix . 'feature_posts[]', unserialize(Configuration::get($this->prefix.'feature_posts_store')));
@@ -297,7 +296,7 @@ class Mjinstagramfeed extends Module
         if (Tools::isSubmit('refreshToken')) {
             $url = "https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=".Configuration::get($this->prefix.'access_token');
             $getRefreshLongToken = new Mjinstagramfeed();
-            $responseRefreshLongToken = $getRefreshLongToken->make_curl($url, "GET", null);
+            $responseRefreshLongToken = $getRefreshLongToken->makeCurl($url, "GET", null);
             $resultRefreshLongToken = (json_decode($responseRefreshLongToken, 1));
             Configuration::updateValue($this->prefix.'access_token', $resultRefreshLongToken['access_token']);
             Configuration::updateValue($this->prefix.'expires_in', $resultRefreshLongToken['expires_in']);
@@ -315,7 +314,7 @@ class Mjinstagramfeed extends Module
                 Configuration::updateValue($input['name'], Tools::getValue($input['name']));
             }
             
-             foreach ($this->fields_form[1]['form']['input'] as $input) {
+            foreach ($this->fields_form[1]['form']['input'] as $input) {
                 Configuration::updateValue($input['name'], Tools::getValue($input['name']));
             }
             foreach ($this->fields_form[4]['form']['input'] as $input) {
@@ -323,8 +322,6 @@ class Mjinstagramfeed extends Module
 
                 $sql = "UPDATE "._DB_PREFIX_."mj_simple_instagram SET pozycja = '".Tools::getValue('mjinstagramfeed_pozycja_'.$input['data-val'])."' WHERE id_mj_simple_instagram = '".$input['data-val']."'";
                 DB::getInstance()->Execute($sql, 1, 0);
-
-                
             }
             Configuration::updateValue($this->prefix.'cron', Configuration::get($this->prefix.'redirect_uri').'?access_token='.Configuration::get($this->prefix.'access_token'));
             
@@ -336,14 +333,14 @@ class Mjinstagramfeed extends Module
     {
         return $this->postProcess().$this->renderForm();
     }
-    public function make_curl($url, $method, $params)
+    public function makeCurl($url, $method, $params)
     {
         $cu = curl_init();
 
         curl_setopt($cu, CURLOPT_URL, $url);
         curl_setopt($cu, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($cu, CURLOPT_CUSTOMREQUEST, $method);
-        curl_setopt($cu, CURLOPT_RETURNTRANSFER, 1); 
+        curl_setopt($cu, CURLOPT_RETURNTRANSFER, 1);
         if ($params) {
             curl_setopt($cu, CURLOPT_POSTFIELDS, http_build_query($params));
         }
@@ -372,7 +369,7 @@ class Mjinstagramfeed extends Module
         $posty = array();
         
         if (count($wyroznione_posty) > 0) {
-                $sql_post = "SELECT * FROM "._DB_PREFIX_."mj_simple_instagram WHERE id_mj_simple_instagram IN (".implode(",",$wyroznione_posty).") ORDER BY pozycja ASC LIMIT 8";
+                $sql_post = "SELECT * FROM "._DB_PREFIX_."mj_simple_instagram WHERE id_mj_simple_instagram IN (".implode(",", $wyroznione_posty).") ORDER BY pozycja ASC LIMIT 8";
                 $posty = @DB::getInstance()->ExecuteS($sql_post, 1, 0);
         }
        // echo implode(",",$wyroznione_posty);

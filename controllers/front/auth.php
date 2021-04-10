@@ -1,6 +1,6 @@
 <?php
 /**
- * Instagram feed via oAuth 
+ * Instagram feed via oAuth
  * @author Michał Jendraszczyk
  * @copyright (c) 2020, Michał Jendraszczyk
  * @license https://mages.pl
@@ -50,9 +50,9 @@ class MjinstagramfeedAuthModuleFrontController extends ModuleFrontController
         parent::postProcess();
 
             // Autoryzacja
-            if(empty(Tools::getValue('code')) && empty(Tools::getValue('access_token'))) {
+        if (empty(Tools::getValue('code')) && empty(Tools::getValue('access_token'))) {
                Tools::redirect("https://api.instagram.com/oauth/authorize?client_id=".Configuration::get($this->prefix.'client_id')."&redirect_uri=".Configuration::get($this->prefix.'redirect_uri')."&scope=user_profile,user_media&response_type=code");
-           }
+        }
 
             $url = "https://api.instagram.com/oauth/access_token";
             $params = array(
@@ -82,11 +82,11 @@ class MjinstagramfeedAuthModuleFrontController extends ModuleFrontController
              * Pobieranie ID usera
              */
             if (empty(Configuration::get($this->prefix.'user_id'))) {
-                $prepareIdUser = trim(substr($responseToken, strpos($responseToken,'"user_id":')),"}");
-                $getIdUser = trim($prepareIdUser, ' "user_id":');
+                $prepareIdUser = trim(Tools::substr($responseToken, strpos($responseToken,'"user_id":')), "}");
+                $getIdUser = trim($prepareIdUser, '"user_id":');
                 
                 if (is_numeric($getIdUser)) {
-                   Configuration::updateValue($this->prefix.'user_id', $getIdUser);
+                    Configuration::updateValue($this->prefix.'user_id', $getIdUser);
                 }
             }
             $getIdUser = Configuration::get($this->prefix.'user_id');
@@ -103,13 +103,13 @@ class MjinstagramfeedAuthModuleFrontController extends ModuleFrontController
                     $MediaResponse = json_decode($responseMedia, true);
 
                     foreach ($MediaResponse['media']["data"] as $media) {
-                       $obrazki = $media;
-                       $next_url = $MediaResponse['media']['paging']['next'];
+                        $obrazki = $media;
+                        $next_url = $MediaResponse['media']['paging']['next'];
 
-                       foreach ($obrazki as $obrazek) {
-                           $this->status = '1';
+                        foreach ($obrazki as $obrazek) {
+                            $this->status = '1';
                             $this->processAddImages("https://graph.instagram.com/".$obrazek."?fields=id,media_type,caption,permalink,media_url,username,timestamp&access_token=".$access_token);
-                       }
+                        }
                     }
                 }
             }
@@ -135,8 +135,8 @@ class MjinstagramfeedAuthModuleFrontController extends ModuleFrontController
         /**
          * Zapisuj grafikę na serwerze i dodawaj do bazy
          */
-        @copy($obraz["media_url"], dirname(__FILE__).'/../../img/'.$obraz["id"].'.jpg');
-        $addImage = (new Mjinstagramfeed());
+            @copy($obraz["media_url"], dirname(__FILE__).'/../../img/'.$obraz["id"].'.jpg');
+            $addImage = (new Mjinstagramfeed());
             $params = array(
                 "post_id" => $obraz["id"],
                 "post_link" => $obraz["permalink"],
@@ -144,7 +144,7 @@ class MjinstagramfeedAuthModuleFrontController extends ModuleFrontController
                 "date_add" => date('Y-m-d H:i:s', strtotime($obraz['timestamp']))
             );
 
-        $addImage->addInstagramFeed($params);
+            $addImage->addInstagramFeed($params);
         }
     }
     /**

@@ -1,6 +1,6 @@
 <?php
 /**
- * Instagram feed via oAuth 
+ * Instagram feed via oAuth
  * @author Michał Jendraszczyk
  * @copyright (c) 2020, Michał Jendraszczyk
  * @license https://mages.pl
@@ -30,5 +30,3 @@ class MjinstagramfeedShowModuleFrontController extends ModuleFrontController
         parent::init();
     }
 }
-
-?>

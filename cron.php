@@ -10,4 +10,4 @@ include_once '../../config/config.inc.php';
 include_once 'mjinstagramfeed.php';
 
 $cron = new Mjinstagramfeed();
-echo "init cron";
+echo "OK (".time()."s)";
