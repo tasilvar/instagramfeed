@@ -38,8 +38,6 @@ class MjinstagramfeedAuthModuleFrontController extends ModuleFrontController
      */
     public function initContent()
     {
-        //http://coodo.jm.projektyc.pl/?fc=module&module=mjinstagramfeed&controller=auth
-        //http://localhost:5000/?fc=module&module=mjinstagramfeed&controller=auth
         parent::initContent();
         $this->setTemplate("module:mjinstagramfeed/views/templates/front/auth.tpl");
     }
@@ -103,10 +101,7 @@ class MjinstagramfeedAuthModuleFrontController extends ModuleFrontController
                     $getMedia = (new Mjinstagramfeed());
                     $responseMedia = $getMedia->make_curl($urlMedia, "GET", null);
                     $MediaResponse = json_decode($responseMedia, true);
-        //            echo "ACCESS ".$access_token;
-        //            print_r(json_decode($responseMedia, true));
-        //            echo "U:".$getIdUser;
-        //            exit();
+
                     foreach ($MediaResponse['media']["data"] as $media) {
                        $obrazki = $media;
                        $next_url = $MediaResponse['media']['paging']['next'];
@@ -127,12 +122,12 @@ class MjinstagramfeedAuthModuleFrontController extends ModuleFrontController
      */
     private function processAddImages($url)
     {
-        $urlPhoto = $url;//"https://graph.instagram.com/".$obrazek."?fields=id,media_type,caption,permalink,media_url,username,timestamp&access_token=".access_token;
+        $urlPhoto = $url;
+        //"https://graph.instagram.com/".$obrazek."?fields=id,media_type,caption,permalink,media_url,username,timestamp&access_token=".access_token;
         $getPhoto = (new Mjinstagramfeed());
         $responsePhoto = $getPhoto->make_curl($urlPhoto, "GET", null);
         $obraz = json_decode($responsePhoto, true);
-//        print_r($obraz);
-//        exit();
+
         /**
          * Jeżeli id postu nie istnieje w bazie
          */

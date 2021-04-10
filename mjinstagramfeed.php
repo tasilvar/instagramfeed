@@ -26,7 +26,7 @@ class Mjinstagramfeed extends Module
         $this->prefix = $this->name."_";
         
         $this->displayName = $this->l("Instagram feed");
-        $this->description = $this->l('Umożliwia pobieranie zdjęć z instagrama z wdrożoną nową autoryzacją');
+        $this->description = $this->l('It allows you to download photos from Instagram with implemented new Instagram API');
         $this->confirmUninstall= $this->l("Usunąć ? ");
     }
     private function installModuleTab($tabClass, $tabName, $idTabParent)
@@ -79,7 +79,7 @@ class Mjinstagramfeed extends Module
                 && $this->registerHook("displayFooterProduct")
                 && $this->registerHook("displayInstagramFeed")
                 && $this->registerHook("displayBackOfficeTop")
-                && $this->installModuleTab('AdminMjinstagramfeedimages', array(Configuration::get('PS_LANG_DEFAULT') => 'Import zdjęć instagram'), Tab::getIdFromClassName('AdminCatalog'))
+                && $this->installModuleTab('AdminMjinstagramfeedimages', array(Configuration::get('PS_LANG_DEFAULT') => 'Instagram feed'), Tab::getIdFromClassName('AdminCatalog'))
                 && $this->installTables()
                 && Configuration::updateValue($this->prefix."cron", _PS_BASE_URL_.__PS_BASE_URI__."?fc=module&module=mjinstagramfeed&controller=auth");
     }
@@ -131,11 +131,9 @@ class Mjinstagramfeed extends Module
                     'name' => $this->prefix.'user_name',
                     'required' => true,
                 ),
-                //https://www.instagram.com/coodo_for_kids/?__a=1
-
             ),
             'submit' => array(
-                'title' => $this->l('Zapisz konfigurację'),
+                'title' => $this->l('Save'),
                 'class' => 'btn btn-default pull-right',
             ),
         );
@@ -148,12 +146,12 @@ class Mjinstagramfeed extends Module
         
         $this->fields_form[1]['form'] = array(
             'legend' => array(
-                'title' => $this->l('Autoryzuj i pobierz zdęcia'),
+                'title' => $this->l('AAutoryzuj i pobierz zdęcia'),
             ),
             'input' => array(
                 array(
                     'type' => 'text',
-                    'label' => $this->l('Link do CRONa'),
+                    'label' => $this->l('URL to CRON Job'),
                     'size' => '5',
                     'name' => $this->prefix.'cron',
                     'required' => true,
@@ -161,7 +159,7 @@ class Mjinstagramfeed extends Module
                 ),
             'buttons' => array(
                     'refreshToken' => array(
-                        'title' => $this->l('Odśwież token (ważny do: '.$expires.')'),
+                        'title' => $this->l('Refresh token (valid to: '.$expires.')'),
                         'name' => 'refreshToken',
                         'type' => 'submit',
                         'id' => $this->prefix.'refreshToken',
@@ -169,7 +167,7 @@ class Mjinstagramfeed extends Module
                         'icon' => 'icon-link'
                     ),
                     'pobierzZdjecia' => array(
-                        'title' => $this->l('Autoryzuj i pobierz zdjęcia'),
+                        'title' => $this->l('Authorize and download pictures'),
                         'icon' => 'icon-download',
                         'name' => 'pobierzZdjecia',
                         'id' => $this->prefix.'pobierzZdjecia',
@@ -186,7 +184,7 @@ class Mjinstagramfeed extends Module
             'input' => array(
                 array(
                     'type' => 'text',
-                    'label' => $this->l('ID użytkownika'),
+                    'label' => $this->l('ID user'),
                     'size' => '5',
                     'name' => $this->prefix.'user_id',
                     'required' => true,
@@ -204,12 +202,12 @@ class Mjinstagramfeed extends Module
           $featurePosts = DB::getInstance()->ExecuteS("SELECT * FROM "._DB_PREFIX_."mj_simple_instagram");
           $this->fields_form[3]['form'] = array(
             'legend' => array(
-                'title' => $this->l('Wyróżnione posty'),
+                'title' => $this->l('Feauted posts'),
             ),
             'input' => array(
                 array(
                     'type' => 'select',
-                    'label' => $this->l('Wybierz wyróżnione posty'),
+                    'label' => $this->l('Select feature posts'),
                     'multiple' => true,
                     'size' => '5',
                     'style' => 'width:100%',
@@ -223,7 +221,7 @@ class Mjinstagramfeed extends Module
                 ),
                 ),
             'submit' => array(
-                'title' => $this->l('Zapisz konfigurację'),
+                'title' => $this->l('Save'),
                 'class' => 'btn btn-default pull-right',
             ),
             );
@@ -254,7 +252,7 @@ class Mjinstagramfeed extends Module
             
             $this->fields_form[4]['form'] = array(
             'legend' => array(
-                'title' => $this->l('Pozycje postów z instagrama'),
+                'title' => $this->l('Ordering position posts from instagram'),
             ),
              'input' => $pozycje_postu,
              'submit' => array(
@@ -294,7 +292,6 @@ class Mjinstagramfeed extends Module
     {
         $this->getFormWidget();
         if (Tools::isSubmit('pobierzZdjecia')) {
-            //$this->make_curl("https://api.instagram.com/oauth/authorize?client_id=".$client_id."&redirect_uri=".$redirect_uri."&scope=user_profile,user_media&response_type=code", $method, $params);
             Tools::redirect("https://api.instagram.com/oauth/authorize?client_id=".Configuration::get($this->prefix.'client_id')."&redirect_uri=".Configuration::get($this->prefix.'redirect_uri')."&scope=user_profile,user_media&response_type=code");
         }
         if (Tools::isSubmit('refreshToken')) {
@@ -323,9 +320,7 @@ class Mjinstagramfeed extends Module
             }
             foreach ($this->fields_form[4]['form']['input'] as $input) {
                 Configuration::updateValue($input['name'], Tools::getValue($input['name']));
-//                print_r($input);
 
-//                echo "TT:".Tools::getValue('mjinstagramfeed_pozycja_'.$input['data-val']);
                 $sql = "UPDATE "._DB_PREFIX_."mj_simple_instagram SET pozycja = '".Tools::getValue('mjinstagramfeed_pozycja_'.$input['data-val'])."' WHERE id_mj_simple_instagram = '".$input['data-val']."'";
                 DB::getInstance()->Execute($sql, 1, 0);
 
@@ -377,10 +372,8 @@ class Mjinstagramfeed extends Module
         $posty = array();
         
         if (count($wyroznione_posty) > 0) {
-            //foreach ($wyroznione_posty as $post) {
                 $sql_post = "SELECT * FROM "._DB_PREFIX_."mj_simple_instagram WHERE id_mj_simple_instagram IN (".implode(",",$wyroznione_posty).") ORDER BY pozycja ASC LIMIT 8";
                 $posty = @DB::getInstance()->ExecuteS($sql_post, 1, 0);
-            //}
         }
        // echo implode(",",$wyroznione_posty);
         

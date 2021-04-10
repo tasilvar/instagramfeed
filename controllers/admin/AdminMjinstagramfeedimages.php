@@ -25,13 +25,4 @@ class AdminMjinstagramfeedimagesController extends ModuleAdminController
             Tools::redirectAdmin('index.php?controller=AdminModules&configure=' . $this->module_name . '&token=' . Tools::getAdminTokenLite('AdminModules'));
         }
     }
-//    public function postProcess()
-//    {
-////        if (Tools::getValue('status') == 'auth') {
-////            echo "auth()";
-////            exit();
-////        } else {
-////            Tools::redirectAdmin('index.php?controller=AdminModules&configure=' . $this->module_name . '&token=' . Tools::getAdminTokenLite('AdminModules'));
-////        }
-//    }
 }
